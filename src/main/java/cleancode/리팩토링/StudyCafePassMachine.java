@@ -8,7 +8,9 @@ import cleancode.리팩토링.model.StudyCafeLockerPass;
 import cleancode.리팩토링.model.StudyCafePass;
 import cleancode.리팩토링.model.StudyCafePassType;
 
+import javax.swing.text.html.Option;
 import java.util.List;
+import java.util.Optional;
 
 public class StudyCafePassMachine {
 
@@ -23,8 +25,17 @@ public class StudyCafePassMachine {
 
             StudyCafePass selectedPass = selectedPass();                  //이용권 선택
 
-            StudyCafeLockerPass lockerPass = selectLockerPass(selectedPass);  //LockerPass 정책을 가져옴
-            outputHandler.showPassOrderSummary(selectedPass, lockerPass);  //선택한 이용권 출력
+            Optional<StudyCafeLockerPass> optionalLockerPass = selectLockerPass(selectedPass);  //LockerPass 정책을 가져옴
+
+            optionalLockerPass.ifPresentOrElse(
+                    lockerPass -> outputHandler.showPassOrderSummary(selectedPass, lockerPass),   //if not null
+                    () ->  outputHandler.showPassOrderSummary(selectedPass)        //if null
+            );
+            //if(optionalLockerPass.isPresent()) {
+            //    outputHandler.showPassOrderSummary(selectedPass, optionalLockerPass.get());  //선택한 이용권 출력
+            //} else{
+            //    outputHandler.showPassOrderSummary(selectedPass, null);  //선택한 이용권 출력
+            //}
 
         } catch (AppException e) {
             outputHandler.showSimpleMessage(e.getMessage());
@@ -51,9 +62,9 @@ public class StudyCafePassMachine {
     }
 
 
-    private StudyCafeLockerPass selectLockerPass(StudyCafePass selectedPass) {
+    private Optional<StudyCafeLockerPass> selectLockerPass(StudyCafePass selectedPass) {
         if(selectedPass.getPassType() != StudyCafePassType.FIXED) {
-            return null;
+            return Optional.empty();
         }
 
         List<StudyCafeLockerPass> lockerPasses = studyCafeFileHandler.readLockerPasses();       //사물함 csv 파일 읽어오기
@@ -73,13 +84,13 @@ public class StudyCafePassMachine {
             lockerSelection = inputHandler.getLockerSelection();      //입력 : 사물함 선택 (1)
 
             if (lockerSelection) {     //사물함을 선택(1)했다면
-                return lockerPassCandidate;
+                return Optional.of(lockerPassCandidate);
                 //outputHandler.showPassOrderSummary(selectedPass, lockerPass);
             }
 
         }
 
-        return null;
+        return Optional.empty();
     }
 
 }
