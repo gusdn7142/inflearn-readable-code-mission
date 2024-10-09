@@ -48,17 +48,21 @@ public class StudyCafePassMachine {
         outputHandler.askPassTypeSelection();                         //출력 : 시간(자유석|1), 주단위(자유석|2), 고정권(3)
         StudyCafePassType studyCafePassType = inputHandler.getPassTypeSelectingUserAction();   //입력 : 이용권 (ex, 시간권)
 
-        //중복된 지역 코드들을 전역화
-        List<StudyCafePass> studyCafePasses = studyCafeFileHandler.readStudyCafePasses();   //모든 이용권을 List<객체>화
-
-        //중복된 지역 코드들을 전역화
-        List<StudyCafePass> passCandidates = studyCafePasses.stream()   //hourlyPasses
-                .filter(studyCafePass -> studyCafePass.getPassType() == studyCafePassType)   //StudyCafePassType.HOURLY => studyCafePassType
-                .toList();     //ex) '시간' 단위 이용권 객체들만 추출
+        List<StudyCafePass> passCandidates = findPassCandidatesBy(studyCafePassType);
 
         outputHandler.showPassListForSelection(passCandidates);                   //출력 : 이용권 목록 출력 (ex, 1. 2시간권 - 4000원)
         StudyCafePass selectedPass = inputHandler.getSelectPass(passCandidates);   //입력 ex : 시간권 리스트에서 입력한 index(숫자-1)에 해당되는 시간권 객체중에 입력
         return selectedPass;
+    }
+
+    private List<StudyCafePass> findPassCandidatesBy(StudyCafePassType studyCafePassType) {
+        //중복된 지역 코드들을 전역화
+        List<StudyCafePass> appPasses = studyCafeFileHandler.readStudyCafePasses();   //모든 이용권을 List<객체>화
+
+        //중복된 지역 코드들을 전역화
+        return appPasses.stream()   //hourlyPasses
+                .filter(studyCafePass -> studyCafePass.getPassType() == studyCafePassType)   //StudyCafePassType.HOURLY => studyCafePassType
+                .toList();     //ex) '시간' 단위 이용권 객체들만 추출
     }
 
 
@@ -67,15 +71,7 @@ public class StudyCafePassMachine {
             return Optional.empty();
         }
 
-        List<StudyCafeLockerPass> lockerPasses = studyCafeFileHandler.readLockerPasses();       //사물함 csv 파일 읽어오기
-
-        StudyCafeLockerPass lockerPassCandidate = lockerPasses.stream()
-                .filter(option ->
-                        option.getPassType() == selectedPass.getPassType()
-                                && option.getDuration() == selectedPass.getDuration()
-                )           //FIXED (고정권) 이용권 객체만 추출
-                .findFirst()
-                .orElse(null);
+        StudyCafeLockerPass lockerPassCandidate = findLockerPassCandidateBy(selectedPass);
 
 
         boolean lockerSelection = false;
@@ -91,6 +87,19 @@ public class StudyCafePassMachine {
         }
 
         return Optional.empty();
+    }
+
+
+    private StudyCafeLockerPass findLockerPassCandidateBy(StudyCafePass pass) {
+        List<StudyCafeLockerPass> allLockerPasses = studyCafeFileHandler.readLockerPasses();       //사물함 csv 파일 읽어오기
+
+        return allLockerPasses.stream()
+                .filter(locakerPass ->
+                        locakerPass.getPassType() == pass.getPassType()
+                                && locakerPass.getDuration() == pass.getDuration()
+                )           //FIXED (고정권) 이용권 객체만 추출
+                .findFirst()
+                .orElse(null);
     }
 
 }
