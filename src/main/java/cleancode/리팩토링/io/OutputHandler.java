@@ -1,7 +1,7 @@
-package cleancode.리팩토링전.io;
+package cleancode.리팩토링.io;
 
-import cleancode.리팩토링전.model.StudyCafeLockerPass;
-import cleancode.리팩토링전.model.StudyCafePass;
+import cleancode.리팩토링.model.StudyCafeLockerPass;
+import cleancode.리팩토링.model.StudyCafePass;
 
 import java.util.List;
 

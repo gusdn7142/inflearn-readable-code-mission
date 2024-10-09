@@ -1,8 +1,8 @@
-package cleancode.리팩토링전.io;
+package cleancode.리팩토링.io;
 
-import cleancode.리팩토링전.exception.AppException;
-import cleancode.리팩토링전.model.StudyCafePass;
-import cleancode.리팩토링전.model.StudyCafePassType;
+import cleancode.리팩토링.exception.AppException;
+import cleancode.리팩토링.model.StudyCafePass;
+import cleancode.리팩토링.model.StudyCafePassType;
 
 import java.util.List;
 import java.util.Scanner;

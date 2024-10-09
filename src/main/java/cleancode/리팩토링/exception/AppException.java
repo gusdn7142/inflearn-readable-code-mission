@@ -1,4 +1,4 @@
-package cleancode.리팩토링전.exception;
+package cleancode.리팩토링.exception;
 
 public class AppException extends RuntimeException {
 

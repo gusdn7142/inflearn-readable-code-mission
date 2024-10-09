@@ -1,4 +1,4 @@
-package cleancode.리팩토링전;
+package cleancode.리팩토링;
 
 public class StudyCafeApplication {
 

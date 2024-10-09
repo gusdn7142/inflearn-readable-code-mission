@@ -1,4 +1,4 @@
-package cleancode.리팩토링전.model;
+package cleancode.리팩토링.model;
 
 public class StudyCafeLockerPass {
 
